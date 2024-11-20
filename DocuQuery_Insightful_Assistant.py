@@ -67,4 +67,7 @@ if file is not None:
     )
 
     # Provide the answer if relevant matches are found
-    if match
+    if match:
+        chain = load_qa_chain(llm, chain_type="stuff")
+        response = chain.run(input_documents=match, question=user_question)
+        st.write(response)
