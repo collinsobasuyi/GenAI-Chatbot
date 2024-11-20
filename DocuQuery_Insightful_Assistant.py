@@ -14,11 +14,11 @@ import os
 # # Access the OpenAI API key
 # open_api_key = os.getenv("OPEN_API_KEY")
 
-# Fetch the API key from Streamlit Secrets
+# Access the shared secret
 open_api_key = st.secrets["OPEN_API_KEY"]
 
 if not open_api_key:
-    raise ValueError("API key not found. Please set OPEN_API_KEY in Streamlit Secrets.")
+    raise ValueError("API key not found.")
 
 # Main application header
 st.header("📄 DocuQuery AI: Intelligent Document Assistant", divider=True)
