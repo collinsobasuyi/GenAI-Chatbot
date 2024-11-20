@@ -9,10 +9,11 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables
-load_dotenv()
+# load_dotenv()
 
 # Access the OpenAI API key
 open_api_key = os.getenv("OPEN_API_KEY")
+
 
 # App header
 st.title("📄 DocuQuery AI")
