@@ -8,12 +8,16 @@ from langchain_community.vectorstores import FAISS
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
+# # Load environment variables
 # load_dotenv()
+# # Access the OpenAI API key
+# open_api_key = os.getenv("OPEN_API_KEY")
 
-# Access the OpenAI API key
-open_api_key = os.getenv("OPEN_API_KEY")
+# Fetch the API key from Streamlit Secrets
+open_api_key = st.secrets["OPEN_API_KEY"]
 
+if not open_api_key:
+    raise ValueError("API key not found. Please set OPEN_API_KEY in Streamlit Secrets.")
 
 # App header
 st.title("📄 DocuQuery AI")
