@@ -105,7 +105,7 @@ if file is not None:
     # Input field for user queries
     user_question = st.text_input(
         "💬 Ask a question about your document:",
-        placeholder="Type your question here..."
+        placeholder="Type your question here:"
     )
 
     # Perform similarity search and generate response
