@@ -121,12 +121,15 @@ elif page == "Chatbot":
     st.subheader("AI Chatbot 🤖")
 
     # Input message
-    user_message = st.text_input("You:", key="user_message")
+    user_message = st.text_input("You:", key="user_message", value="", placeholder="Type your message here...")
 
     if st.button("Send"):
         if user_message:
             # Add user message to chat history
             st.session_state.chat_history.append({"role": "user", "content": user_message})
+
+            # Clear the input text box
+            st.session_state.user_message = ""  # Reset the input field
 
             # Generate AI response
             try:
