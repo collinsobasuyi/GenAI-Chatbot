@@ -15,7 +15,7 @@ client = OpenAI(
 )
 
 # client = OpenAI(
-#     api_key="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"
+#     api_key=""
 # )
 
 # Initialize or load journal data
