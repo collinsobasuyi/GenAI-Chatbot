@@ -9,10 +9,15 @@ from datetime import datetime
 # Access the shared secret
 open_api_key = st.secrets["OPEN_API_KEY"]
 
+if not open_api_key:
+    raise ValueError("API key not found. Please set OPEN_API_KEY in Streamlit Secrets.")
+
 # Initialize OpenAI client with the shared secret API key
 client = OpenAI(
     api_key=open_api_key
 )
+
+
 
 # client = OpenAI(
 # )
