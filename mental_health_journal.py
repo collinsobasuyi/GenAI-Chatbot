@@ -15,7 +15,6 @@ client = OpenAI(
 )
 
 # client = OpenAI(
-#     api_key=""
 # )
 
 # Initialize or load journal data
