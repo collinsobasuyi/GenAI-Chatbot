@@ -13,3 +13,4 @@ pandas
 textblob
 vaderSentiment
 streamlit-audiorecorder
+pydub

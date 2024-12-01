@@ -124,18 +124,18 @@ elif page == "Audio Journal":
     audio = audiorecorder("Start Recording", "Stop Recording")
 
     if len(audio) > 0:
-        # Display audio player
-        st.audio(audio.tobytes())
+        # Save the audio as a WAV file
+        audio_file_path = "audio_journal.wav"
+        with open(audio_file_path, "wb") as f:
+            f.write(audio)
 
-        # Save audio file
-        with open("audio_journal.wav", "wb") as f:
-            f.write(audio.tobytes())
-        st.success("Audio recorded successfully!")
+        # Display the audio in the app
+        st.audio(audio_file_path)
 
         # Transcribe audio using OpenAI Whisper
         try:
             transcription = client.audio.transcribe(
-                file=open("audio_journal.wav", "rb"),
+                file=open(audio_file_path, "rb"),
                 model="whisper-1",
                 response_format="text",
             )
