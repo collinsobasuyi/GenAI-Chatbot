@@ -126,8 +126,7 @@ elif page == "Audio Journal":
     if len(audio) > 0:
         # Save the audio as a WAV file
         audio_file_path = "audio_journal.wav"
-        with open(audio_file_path, "wb") as f:
-            f.write(audio)
+        audio.export(audio_file_path, format="wav")
 
         # Display the audio in the app
         st.audio(audio_file_path)
