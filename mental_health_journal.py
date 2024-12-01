@@ -4,6 +4,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+from audiorecorder import audiorecorder
 
 # Access the shared secret
 open_api_key = st.secrets["OPEN_API_KEY"]
@@ -59,7 +60,7 @@ st.markdown(
 # App title
 st.title("Mental Health Journal App 🌸")
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Journal", "Chatbot", "Mood Trends"])
+page = st.sidebar.radio("Go to", ["Journal", "Audio Journal", "Chatbot", "Mood Trends"])
 
 if page == "Journal":
     st.subheader("Journal ✍️")
@@ -116,6 +117,52 @@ if page == "Journal":
             st.markdown(f"*Mood:* {journal['mood']}")
             st.markdown(f"*Encouragement:* {journal['encouragement']}")
             st.write("---")
+
+elif page == "Audio Journal":
+    st.subheader("Audio Journal 🎙️")
+    st.write("### Record Your Audio Journal")
+    audio = audiorecorder("Start Recording", "Stop Recording")
+
+    if len(audio) > 0:
+        # Display audio player
+        st.audio(audio.tobytes())
+
+        # Save audio file
+        with open("audio_journal.wav", "wb") as f:
+            f.write(audio.tobytes())
+        st.success("Audio recorded successfully!")
+
+        # Transcribe audio using OpenAI Whisper
+        try:
+            transcription = client.audio.transcribe(
+                file=open("audio_journal.wav", "rb"),
+                model="whisper-1",
+                response_format="text",
+            )
+            st.write("### Transcription")
+            st.write(transcription)
+
+            # Analyze sentiment of transcription
+            scores = analyzer.polarity_scores(transcription)
+            compound = scores["compound"]
+            if compound > 0.2:
+                mood = "Positive"
+            elif compound < -0.2:
+                mood = "Negative"
+            else:
+                mood = "Neutral"
+
+            # Save transcribed journal
+            st.session_state.journal_data.append({
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "entry": transcription,
+                "mood": mood,
+                "sentiment": compound,
+                "encouragement": "Audio journal recorded and analyzed!"
+            })
+            st.success("Audio journal entry saved!")
+        except Exception as e:
+            st.error(f"Error transcribing audio: {e}")
 
 elif page == "Chatbot":
     st.subheader("AI Chatbot 🤖")
