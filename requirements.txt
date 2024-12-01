@@ -8,3 +8,7 @@ watchdog
 python-dotenv
 langchain-community
 langchain-openai
+matplotlib
+pandas
+textblob
+vaderSentiment
