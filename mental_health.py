@@ -11,6 +11,10 @@ client = OpenAI(api_key=open_api_key)
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+# Initialize user_message in session state
+if "user_message" not in st.session_state:
+    st.session_state.user_message = ""
+
 # Practitioners definition
 practitioners = {
     "Dr. Smith": {
@@ -61,79 +65,6 @@ def handle_user_input():
         except Exception as e:
             st.error(f"Error generating AI response: {e}")
 
-# UI Enhancements
-st.markdown(
-    """
-    <style>
-    .chat-container {
-        max-width: 700px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .user-bubble {
-        background-color: #DCF8C6;
-        color: black;
-        padding: 10px 15px;
-        border-radius: 20px 20px 0 20px;
-        margin: 10px 0;
-        max-width: 80%;
-        float: right;
-        clear: both;
-    }
-    .ai-bubble {
-        background-color: #FFFFFF;
-        color: black;
-        padding: 10px 15px;
-        border-radius: 20px 20px 20px 0;
-        margin: 10px 0;
-        max-width: 80%;
-        float: left;
-        clear: both;
-        border: 1px solid #ddd;
-    }
-    .scrollable-container {
-        max-height: 70vh;
-        overflow-y: auto;
-        padding-bottom: 60px;
-    }
-    .input-container {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: #fff;
-        padding: 10px;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .input-box {
-        flex: 1;
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-    }
-    .send-button {
-        margin-left: 10px;
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-    .send-button:hover {
-        background-color: #45a049;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
 # Sidebar for selecting a practitioner
 st.sidebar.title("Select a Practitioner")
 st.session_state["selected_practitioner"] = st.sidebar.radio(
@@ -160,7 +91,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # Input Box and Send Button
 st.markdown('<div class="input-container">', unsafe_allow_html=True)
-user_message = st.text_input(
+st.text_input(
     "",
     key="user_message",
     placeholder="Type your message here...",
@@ -170,7 +101,7 @@ send_button = st.button("Send", key="send_button", help="Send your message")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Handle Send Action
-if send_button and user_message.strip() != "":
+if send_button and st.session_state["user_message"].strip() != "":
     handle_user_input()
 
 # Scroll to the Latest Message
