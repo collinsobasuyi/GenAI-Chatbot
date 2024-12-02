@@ -11,10 +11,6 @@ client = OpenAI(api_key=open_api_key)
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# Initialize user_message in session state
-if "user_message" not in st.session_state:
-    st.session_state.user_message = ""
-
 # Practitioners definition
 practitioners = {
     "Dr. Smith": {
@@ -40,15 +36,10 @@ practitioners = {
 }
 
 # Helper function to process user input
-def handle_user_input():
-    # Safely retrieve and process the user message
-    user_message = st.session_state.get("user_message", "").strip()
-    if user_message:
+def handle_user_input(user_message):
+    if user_message.strip():
         # Add user message to chat history
         st.session_state.chat_history.append({"role": "user", "content": user_message})
-
-        # Clear the text box
-        st.session_state["user_message"] = ""
 
         # Generate AI Response
         try:
@@ -94,9 +85,8 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # Input Box and Send Button
 st.markdown('<div class="input-container">', unsafe_allow_html=True)
-st.text_input(
+user_message = st.text_input(
     "",
-    key="user_message",
     placeholder="Type your message here...",
     label_visibility="collapsed",
 )
@@ -104,8 +94,8 @@ send_button = st.button("Send", key="send_button", help="Send your message")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Handle Send Action
-if send_button:
-    handle_user_input()
+if send_button and user_message.strip():
+    handle_user_input(user_message)
 
 # Scroll to the Latest Message
 st.markdown(
