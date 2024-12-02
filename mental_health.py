@@ -35,6 +35,32 @@ practitioners = {
     },
 }
 
+# Helper function to process user input
+def handle_user_input():
+    user_message = st.session_state["user_message"]
+    if user_message.strip() != "":
+        # Add user message to chat history
+        st.session_state.chat_history.append({"role": "user", "content": user_message})
+        st.session_state["user_message"] = ""  # Clear the text box
+
+        # Generate AI Response
+        try:
+            practitioner = practitioners[st.session_state["selected_practitioner"]]
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": practitioner["style"]},
+                ] + st.session_state.chat_history,
+                max_tokens=400,
+                temperature=0.7,
+            )
+            ai_response = response.choices[0].message.content.strip()
+
+            # Add AI response to chat history
+            st.session_state.chat_history.append({"role": "assistant", "content": ai_response})
+        except Exception as e:
+            st.error(f"Error generating AI response: {e}")
+
 # UI Enhancements
 st.markdown(
     """
@@ -68,36 +94,6 @@ st.markdown(
         clear: both;
         border: 1px solid #ddd;
     }
-    .input-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 10px;
-        background-color: #fff;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .input-box {
-        width: 80%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        font-size: 16px;
-    }
-    .send-button {
-        width: 18%;
-        padding: 10px;
-        margin-left: 10px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-    .send-button:hover {
-        background-color: #45a049;
-    }
     .scrollable-container {
         max-height: 70vh;
         overflow-y: auto;
@@ -108,15 +104,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Select a Practitioner
+# Sidebar for selecting a practitioner
 st.sidebar.title("Select a Practitioner")
-selected_practitioner = st.sidebar.radio(
+st.session_state["selected_practitioner"] = st.sidebar.radio(
     "Choose a mental health practitioner",
-    list(practitioners.keys())
+    list(practitioners.keys()),
 )
-practitioner = practitioners[selected_practitioner]
 
 # App Header
+practitioner = practitioners[st.session_state["selected_practitioner"]]
 st.title(f"Chat with {practitioner['name']}")
 st.subheader(f"{practitioner['specialty']}")
 
@@ -132,38 +128,14 @@ for message in st.session_state.chat_history:
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Input Box and Send Button
-st.markdown('<div class="input-container">', unsafe_allow_html=True)
-user_message = st.text_input(
+# Input Box
+st.text_input(
     "",
     key="user_message",
     placeholder="Type your message here...",
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    on_change=handle_user_input,  # Callback on input submission
 )
-send_button = st.button("Send", key="send_button", help="Send your message")
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Handle Send Action
-if send_button and user_message.strip() != "":
-    # Add user message to chat history
-    st.session_state.chat_history.append({"role": "user", "content": user_message})
-
-    # Generate AI Response
-    try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": practitioner["style"]},
-            ] + st.session_state.chat_history,
-            max_tokens=400,
-            temperature=0.7,
-        )
-        ai_response = response.choices[0].message.content.strip()
-
-        # Add AI response to chat history
-        st.session_state.chat_history.append({"role": "assistant", "content": ai_response})
-    except Exception as e:
-        st.error(f"Error generating AI response: {e}")
 
 # Scroll to the Latest Message
 st.markdown(
