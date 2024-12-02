@@ -99,6 +99,36 @@ st.markdown(
         overflow-y: auto;
         padding-bottom: 60px;
     }
+    .input-container {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        padding: 10px;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .input-box {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+    .send-button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .send-button:hover {
+        background-color: #45a049;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -128,14 +158,20 @@ for message in st.session_state.chat_history:
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Input Box
-st.text_input(
+# Input Box and Send Button
+st.markdown('<div class="input-container">', unsafe_allow_html=True)
+user_message = st.text_input(
     "",
     key="user_message",
     placeholder="Type your message here...",
     label_visibility="collapsed",
-    on_change=handle_user_input,  # Callback on input submission
 )
+send_button = st.button("Send", key="send_button", help="Send your message")
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Handle Send Action
+if send_button and user_message.strip() != "":
+    handle_user_input()
 
 # Scroll to the Latest Message
 st.markdown(
