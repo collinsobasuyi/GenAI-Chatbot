@@ -41,11 +41,14 @@ practitioners = {
 
 # Helper function to process user input
 def handle_user_input():
-    user_message = st.session_state["user_message"]
-    if user_message.strip() != "":
+    # Safely retrieve and process the user message
+    user_message = st.session_state.get("user_message", "").strip()
+    if user_message:
         # Add user message to chat history
         st.session_state.chat_history.append({"role": "user", "content": user_message})
-        st.session_state["user_message"] = ""  # Clear the text box
+
+        # Clear the text box
+        st.session_state["user_message"] = ""
 
         # Generate AI Response
         try:
@@ -101,7 +104,7 @@ send_button = st.button("Send", key="send_button", help="Send your message")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Handle Send Action
-if send_button and st.session_state["user_message"].strip() != "":
+if send_button:
     handle_user_input()
 
 # Scroll to the Latest Message
